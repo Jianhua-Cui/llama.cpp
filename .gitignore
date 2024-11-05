@@ -63,6 +63,7 @@ out/
 tmp/
 autogen-*.md
 install
+host_install
 
 # Deprecated
 
