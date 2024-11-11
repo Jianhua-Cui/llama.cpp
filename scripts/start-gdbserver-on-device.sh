@@ -3,7 +3,7 @@ set -ex
 
 DEVICE_DIR="/data/local/tmp/cjh"
 DEVICE_IP_PORT="192.168.31.44:8848"
-TARGET_ARGS="-m '/data/local/tmp/cjh/model-74701a8c35f6.gguf' -p 'You are llama3.2 1b' -cnv"
+TARGET_ARGS="-m '/data/local/tmp/cjh/Qwen__Qwen2.5-1.5B-Instruct-Q8_0.gguf' -p '请介绍一下成都这座城市' -n 256"
 
 SRC_DIR=$(readlink -f "`dirname $0`")
 WORK_DIR=$(dirname ${SRC_DIR})
