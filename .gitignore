@@ -64,6 +64,7 @@ tmp/
 autogen-*.md
 install
 host_install
+host_build
 
 # Deprecated
 
