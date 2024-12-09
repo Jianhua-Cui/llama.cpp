@@ -243,6 +243,7 @@ class MODEL_ARCH(IntEnum):
     COMMAND_R    = auto()
     DBRX         = auto()
     OLMO         = auto()
+    OLMO2        = auto()
     OLMOE        = auto()
     OPENELM      = auto()
     ARCTIC       = auto()
@@ -404,6 +405,7 @@ MODEL_ARCH_NAMES: dict[MODEL_ARCH, str] = {
     MODEL_ARCH.COMMAND_R:      "command-r",
     MODEL_ARCH.DBRX:           "dbrx",
     MODEL_ARCH.OLMO:           "olmo",
+    MODEL_ARCH.OLMO2:          "olmo2",
     MODEL_ARCH.OLMOE:          "olmoe",
     MODEL_ARCH.OPENELM:        "openelm",
     MODEL_ARCH.ARCTIC:         "arctic",
@@ -759,6 +761,7 @@ MODEL_TENSORS: dict[MODEL_ARCH, list[MODEL_TENSOR]] = {
         MODEL_TENSOR.TOKEN_EMBD,
         MODEL_TENSOR.OUTPUT_NORM,
         MODEL_TENSOR.OUTPUT,
+        MODEL_TENSOR.ROPE_FREQS,
         MODEL_TENSOR.ATTN_NORM,
         MODEL_TENSOR.ATTN_Q,
         MODEL_TENSOR.ATTN_K,
@@ -894,6 +897,8 @@ MODEL_TENSORS: dict[MODEL_ARCH, list[MODEL_TENSOR]] = {
         MODEL_TENSOR.OUTPUT,
         MODEL_TENSOR.OUTPUT_NORM,
         MODEL_TENSOR.ROPE_FREQS,
+        MODEL_TENSOR.ROPE_FACTORS_LONG,
+        MODEL_TENSOR.ROPE_FACTORS_SHORT,
         MODEL_TENSOR.ATTN_NORM,
         MODEL_TENSOR.ATTN_Q,
         MODEL_TENSOR.ATTN_K,
@@ -1065,6 +1070,22 @@ MODEL_TENSORS: dict[MODEL_ARCH, list[MODEL_TENSOR]] = {
         MODEL_TENSOR.ATTN_K,
         MODEL_TENSOR.ATTN_V,
         MODEL_TENSOR.ATTN_OUT,
+        MODEL_TENSOR.FFN_GATE,
+        MODEL_TENSOR.FFN_DOWN,
+        MODEL_TENSOR.FFN_UP,
+    ],
+    MODEL_ARCH.OLMO2: [
+        MODEL_TENSOR.TOKEN_EMBD,
+        MODEL_TENSOR.OUTPUT_NORM,
+        MODEL_TENSOR.OUTPUT,
+        MODEL_TENSOR.ATTN_Q,
+        MODEL_TENSOR.ATTN_K,
+        MODEL_TENSOR.ATTN_V,
+        MODEL_TENSOR.ATTN_OUT,
+        MODEL_TENSOR.ATTN_POST_NORM,
+        MODEL_TENSOR.ATTN_Q_NORM,
+        MODEL_TENSOR.ATTN_K_NORM,
+        MODEL_TENSOR.FFN_POST_NORM,
         MODEL_TENSOR.FFN_GATE,
         MODEL_TENSOR.FFN_DOWN,
         MODEL_TENSOR.FFN_UP,
@@ -1370,9 +1391,10 @@ class TokenType(IntEnum):
 
 
 class RopeScalingType(Enum):
-    NONE   = 'none'
-    LINEAR = 'linear'
-    YARN   = 'yarn'
+    NONE     = 'none'
+    LINEAR   = 'linear'
+    YARN     = 'yarn'
+    LONGROPE = 'longrope'
 
 
 class PoolingType(IntEnum):
@@ -1411,9 +1433,6 @@ class GGMLQuantizationType(IntEnum):
     F64     = 28
     IQ1_M   = 29
     BF16    = 30
-    Q4_0_4_4 = 31
-    Q4_0_4_8 = 32
-    Q4_0_8_8 = 33
     TQ1_0   = 34
     TQ2_0   = 35
 
@@ -1457,9 +1476,9 @@ class LlamaFileType(IntEnum):
     MOSTLY_IQ4_XS        = 30  # except 1d tensors
     MOSTLY_IQ1_M         = 31  # except 1d tensors
     MOSTLY_BF16          = 32  # except 1d tensors
-    MOSTLY_Q4_0_4_4      = 33  # except 1d tensors
-    MOSTLY_Q4_0_4_8      = 34  # except 1d tensors
-    MOSTLY_Q4_0_8_8      = 35  # except 1d tensors
+    # MOSTLY_Q4_0_4_4      = 33  # removed from gguf files, use Q4_0 and runtime repack
+    # MOSTLY_Q4_0_4_8      = 34  # removed from gguf files, use Q4_0 and runtime repack
+    # MOSTLY_Q4_0_8_8      = 35  # removed from gguf files, use Q4_0 and runtime repack
     MOSTLY_TQ1_0         = 36  # except 1d tensors
     MOSTLY_TQ2_0         = 37  # except 1d tensors
 
@@ -1535,9 +1554,6 @@ GGML_QUANT_SIZES: dict[GGMLQuantizationType, tuple[int, int]] = {
     GGMLQuantizationType.F64:     (1, 8),
     GGMLQuantizationType.IQ1_M:   (256, QK_K // 8 + QK_K // 16  + QK_K // 32),
     GGMLQuantizationType.BF16:    (1, 2),
-    GGMLQuantizationType.Q4_0_4_4:(32, 2 + 16),
-    GGMLQuantizationType.Q4_0_4_8:(32, 2 + 16),
-    GGMLQuantizationType.Q4_0_8_8:(32, 2 + 16),
     GGMLQuantizationType.TQ1_0:   (256, 2 + 4 * 13),
     GGMLQuantizationType.TQ2_0:   (256, 2 + 64),
 }
