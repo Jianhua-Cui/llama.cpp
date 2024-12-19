@@ -9,7 +9,7 @@ fi
 DEVICE_DIR="/data/local/tmp/cjh"
 DEVICE_IP_PORT="192.168.31.167:8848"
 EXECUTABLE="llama-cli"
-TARGET_ARGS="-m '/data/local/tmp/cjh/Qwen__Qwen2.5-1.5B-Instruct-Q8_0.gguf' -p '请介绍一下成都这座城市' -n 256"
+TARGET_ARGS="-m '/data/local/tmp/cjh/Qwen__Qwen2.5-1.5B-Instruct-Q4_0.gguf' -p '成都是一座' -n 256"
 
 SRC_DIR=$(readlink -f "`dirname $0`")
 WORK_DIR=$(dirname ${SRC_DIR})
