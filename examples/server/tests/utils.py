@@ -65,6 +65,7 @@ class ServerProcess:
     server_reranking: bool | None = False
     server_metrics: bool | None = False
     server_slots: bool | None = False
+    pooling: str | None = None
     draft: int | None = None
     api_key: str | None = None
     response_format: str | None = None
@@ -72,6 +73,7 @@ class ServerProcess:
     disable_ctx_shift: int | None = False
     draft_min: int | None = None
     draft_max: int | None = None
+    no_webui: bool | None = None
 
     # session variables
     process: subprocess.Popen | None = None
@@ -131,6 +133,8 @@ class ServerProcess:
             server_args.append("--metrics")
         if self.server_slots:
             server_args.append("--slots")
+        if self.pooling:
+            server_args.extend(["--pooling", self.pooling])
         if self.model_alias:
             server_args.extend(["--alias", self.model_alias])
         if self.n_ctx:
@@ -158,6 +162,8 @@ class ServerProcess:
             server_args.extend(["--draft-max", self.draft_max])
         if self.draft_min:
             server_args.extend(["--draft-min", self.draft_min])
+        if self.no_webui:
+            server_args.append("--no-webui")
 
         args = [str(arg) for arg in [server_path, *server_args]]
         print(f"bench: starting server with: {' '.join(args)}")
