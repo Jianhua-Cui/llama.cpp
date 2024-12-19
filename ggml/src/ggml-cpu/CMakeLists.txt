@@ -116,19 +116,21 @@ function(ggml_add_cpu_backend_variant_impl tag_name)
                 set(CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS_SAVE})
 
             else()
+                set(GGML_CPU_ARM_ARCH "armv8.2-a+dotprod+i8mm")
+                message(STATUS "[CJH] GGML_CPU_ARM_ARCH=${GGML_CPU_ARM_ARCH}")
                 if (GGML_CPU_ARM_ARCH)
                     list(APPEND ARCH_FLAGS -march=${GGML_CPU_ARM_ARCH})
                 endif()
             endif()
 
             # show enabled features
-            execute_process(
-                COMMAND ${CMAKE_C_COMPILER} ${ARCH_FLAGS} -dM -E -
-                INPUT_FILE "/dev/null"
-                OUTPUT_VARIABLE ARM_FEATURE
-                RESULT_VARIABLE ARM_FEATURE_RESULT
-            )
-            if (ARM_FEATURE_RESULT)
+            # execute_process(
+            #     COMMAND ${CMAKE_C_COMPILER} ${ARCH_FLAGS} -dM -E -
+            #     INPUT_FILE "/dev/null"
+            #     OUTPUT_VARIABLE ARM_FEATURE
+            #     RESULT_VARIABLE ARM_FEATURE_RESULT
+            # )
+            if (NOT GGML_NATIVE AND ARM_FEATURE_RESULT)
                 message(FATAL_ERROR "Failed to get ARM features")
             else()
                 foreach(feature DOTPROD SVE MATMUL_INT8 FMA FP16_VECTOR_ARITHMETIC)
