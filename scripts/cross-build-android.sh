@@ -21,7 +21,7 @@ fi
 
 CMAKE_PARA_ANDROID="-DCMAKE_TOOLCHAIN_FILE=${ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake \
     -DANDROID_NDK=${ANDROID_NDK_HOME} \
-    -DGGML_OPENMP=OFF \
+    -DGGML_OPENMP=ON \
     -DANDROID_ABI=arm64-v8a \
     -DANDROID_TOOLCHAIN=clang++ \
     -DANDROID_PLATFORM=android-28 \
