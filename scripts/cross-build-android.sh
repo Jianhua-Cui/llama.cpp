@@ -38,8 +38,8 @@ else
     # For Debug build, add -O0 and -g for debugging
     CMAKE_PARA=" -DCMAKE_INSTALL_PREFIX=$(dirname ${SRC_DIR})/install \
         -DCMAKE_BUILD_TYPE=Debug \
-        -DCMAKE_C_FLAGS_DEBUG='-O0' \
-        -DCMAKE_CXX_FLAGS_DEBUG='-O0' \
+        -DCMAKE_C_FLAGS_DEBUG='-Og' \
+        -DCMAKE_CXX_FLAGS_DEBUG='-Og' \
         -G Ninja"
 fi
 
